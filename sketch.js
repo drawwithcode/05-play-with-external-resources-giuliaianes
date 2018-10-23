@@ -1,5 +1,5 @@
 var fighter1X=20;
-var fighter2X=300;
+var fighter2X=380;
 var fighterY=100;
 var fighters1Image=['./assets/ryu.png', './assets/akuma.png', './assets/zangief.png', './assets/balrog.png', './assets/vega.png', './assets/blanka.png', './assets/sagat.png', './assets/cammy.png'];
 var fighters2Image=['./assets/ken.png', './assets/long.png', './assets/chun.png', './assets/dahlsim.png', './assets/deejay.png', './assets/guile.png', './assets/hawk.png', './assets/honda.png'];
@@ -17,7 +17,6 @@ var deadZone=50;
 var wallpaper;
 var amp;
 
-
 function preload(){
   mySong = loadSound('assets/bensound-highoctane.mp3');
 
@@ -28,8 +27,6 @@ function preload(){
   fighter2=loadImage(fighters2Image[fighter2Index]);
 
   wallpaper=loadImage('./assets/scenario.jpg');
-
-  //mySong = loadSound("./assets/Slinte_-_06_-_The_Manx_Lullaby.mp3");
 
 }
 
@@ -50,7 +47,7 @@ function draw() {
   image(wallpaper, 0, 0);
   //background(85,104,50);
   var vol= amp.getLevel();
-  var dim= map(vol,0,2,width/15,width/4);
+  var dim= map(vol,0,1,width/15,width/4);
 
 
   push();
@@ -64,17 +61,23 @@ function draw() {
 
   push();
   scale(2, 2);
-  //image(fighter1, fighter1X, fighterY);
-  //image(fighter2, fighter2X, fighterY);
-  image(fighter1, fighter1X, fighterY, dim+width/40, dim+height/25);
-  image(fighter2, fighter2X, fighterY, dim+width/40, dim+height/25);
+  if(mouseX<(midPointX-deadZone)){
+    image(fighter1, fighter1X, fighterY);
+  } else {
+    image(fighter1, fighter1X, fighterY, dim+width/40, dim+height/25);
+  }
+  if(mouseX>(midPointX+deadZone)){
+    image(fighter2, fighter2X-fighter2.width, fighterY);
+  } else {
+    image(fighter2, fighter2X, fighterY, -(dim+width/40), dim+height/25);
+  }
+
   pop();
 
   push();
   scale(0.3, 0.3);
   image(versus, 1100, 180);
   pop();
-
 
   if (mySong.isPlaying() == true) {
     //mySong.play();
@@ -101,21 +104,20 @@ function draw() {
 
   if(fighter1Life>0){
     if(mouseX<(midPointX-deadZone)){
-      if(frameCount%10==0){
-        fighter1Life-=10
+      if(dim>width/8){
+        fighter1Life-=dim/15;
       }
     }
   }else{
     fighter1Life=maxLife;
     fighter1Index=(fighter1Index+1)%fighters1Image.length;
     fighter1= loadImage(fighters1Image[fighter1Index]);
-
   }
 
   if(fighter2Life>0){
     if(mouseX>(midPointX+deadZone)){
-      if(frameCount%10==0){
-        fighter2Life-=10
+      if(dim>width/8){
+        fighter2Life-=dim/15;
       }
     }
   }else{
@@ -125,20 +127,16 @@ function draw() {
       fighter2Index=fighter2Index+(-1);
     }
     fighter2= loadImage(fighters2Image[fighter2Index]);
-
   }
 
   /*var myRate = map(mouseX,0,height,0,2);
   //mySong.rate(4);
   mySong.rate(myRate);
   mySong.amp(mouseX/height);*/
-
-
-
 }
 
-
 function freqGen() {
+  var dim;
   var spectrum = frequency.analyze();
   var y=random(10,100);
 
@@ -150,6 +148,8 @@ function freqGen() {
 
   beginShape();
   for (v = 200; v < 600; v += 20) {
+    //stroke(255, 153, 51);
+    //filter(BLUR, 10);
     vertex(v, map(spectrum[v], 180, 255, 170, 100));
   }
   endShape();
