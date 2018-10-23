@@ -36,6 +36,7 @@ function setup() {
   mySong.play();
   createCanvas(800, 600);
 
+
   analyser=new p5.Amplitude();
   analyser.setInput(mySong);
   frequency = new p5.FFT();
