@@ -16,6 +16,8 @@ var midPointX=400;
 var deadZone=50;
 var wallpaper;
 var amp;
+var fighter1Victory=0;
+var fighter2Victory=0
 
 function preload(){
   mySong = loadSound('assets/bensound-highoctane.mp3');
@@ -49,13 +51,37 @@ function draw() {
   var vol= amp.getLevel();
   var dim= map(vol,0,1,width/15,width/4);
 
+  push();
+  noStroke();
+  textFont('Stalinist One');
+  textAlign(CENTER);
+  textSize(40);
+  fill(255);
+  text(fighter1Victory, 50, 70);
+  pop();
+
+  push();
+  noStroke();
+  textFont('Stalinist One');
+  textAlign(CENTER);
+  textSize(40);
+  fill(255);
+  if(fighter2Victory<10){
+  text(fighter2Victory, 750, 70);
+}else{
+  text(fighter2Victory, 740, 70);
+}
+  pop();
+
+
 
   push();
   var myText='Who\'s the strongest? Mouse decides!';
+  noStroke();
   textFont('Stalinist One');
   textAlign(CENTER);
   textSize(20);
-  fill(200);
+  fill(255);
   text(myText, width/2, 550);
   pop();
 
@@ -71,7 +97,6 @@ function draw() {
   } else {
     image(fighter2, fighter2X, fighterY, -(dim+width/40), dim+height/25);
   }
-
   pop();
 
   push();
@@ -112,6 +137,7 @@ function draw() {
     fighter1Life=maxLife;
     fighter1Index=(fighter1Index+1)%fighters1Image.length;
     fighter1= loadImage(fighters1Image[fighter1Index]);
+    fighter2Victory++;
   }
 
   if(fighter2Life>0){
@@ -123,34 +149,26 @@ function draw() {
   }else{
     fighter2Life=maxLife;
     fighter2Index=(fighter2Index+1)%fighters2Image.length;
+
     if(fighter2Index<0){
       fighter2Index=fighter2Index+(-1);
     }
     fighter2= loadImage(fighters2Image[fighter2Index]);
+    fighter1Victory++;
   }
-
-  /*var myRate = map(mouseX,0,height,0,2);
-  //mySong.rate(4);
-  mySong.rate(myRate);
-  mySong.amp(mouseX/height);*/
 }
 
 function freqGen() {
-  var dim;
   var spectrum = frequency.analyze();
-  var y=random(10,100);
 
-  noFill();
   push();
-  translate(0,y/10)
-  stroke(255,153,51);
   strokeWeight(6);
 
   beginShape();
   for (v = 200; v < 600; v += 20) {
-    //stroke(255, 153, 51);
-    //filter(BLUR, 10);
-    vertex(v, map(spectrum[v], 180, 255, 170, 100));
+    stroke(spectrum[v]*2,10,10);
+    strokeWeight(spectrum[v]/10);
+    vertex(v, map(spectrum[v], 200, 255, 170, 100));
   }
   endShape();
   pop();
